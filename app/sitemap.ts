@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://sachinsdanceacademy.com'; // Replace with actual domain
+    const baseUrl = 'https://sachin-s-dance-academy-r5qh.vercel.app';
 
     // Static routes
     const routes = [

@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/dashboard/', '/admin/', '/api/'],
         },
-        sitemap: 'https://sachinsdanceacademy.com/sitemap.xml',
+        sitemap: 'https://sachin-s-dance-academy-r5qh.vercel.app/sitemap.xml',
     };
 }
