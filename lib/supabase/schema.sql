@@ -1,4 +1,4 @@
--- RhythmFlow Academy Database Schema
+-- Sachin's Dance Academy Database Schema
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

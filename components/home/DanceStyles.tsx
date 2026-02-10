@@ -43,13 +43,13 @@ export default function DanceStyles() {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Explore Dance <span className="text-gradient">Styles</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Explore Dance <span className="gradient-title">Styles</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             From classical to contemporary, discover the perfect style that resonates with your soul
           </p>
         </div>
@@ -58,18 +58,18 @@ export default function DanceStyles() {
           {styles.map((style, index) => (
             <div
               key={index}
-              className="group relative bg-white rounded-2xl p-8 shadow-lg hover-lift cursor-pointer overflow-hidden"
+              className="group relative glass-card rounded-2xl p-8 shadow-xl hover-lift cursor-pointer overflow-hidden border border-white/5"
             >
               {/* Background Gradient */}
               <div className={`absolute inset-0 bg-gradient-to-br ${style.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
-              
+
               {/* Content */}
               <div className="relative z-10">
-                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${style.color} mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${style.color} mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                   <style.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">{style.name}</h3>
-                <p className="text-gray-600">{style.description}</p>
+                <h3 className="text-2xl font-bold text-white mb-3">{style.name}</h3>
+                <p className="text-gray-400">{style.description}</p>
               </div>
 
               {/* Hover Effect */}

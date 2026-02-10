@@ -7,7 +7,7 @@ export interface User {
   role: 'student' | 'admin';
 }
 
-export const AUTH_STORAGE_KEY = 'rhythmflow_user';
+export const AUTH_STORAGE_KEY = 'sachinsdance_user';
 
 export function setUser(user: User) {
   if (typeof window !== 'undefined') {

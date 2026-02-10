@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { 
+import {
   ArrowLeft,
   PlayCircle,
   CheckCircle,
@@ -14,63 +14,80 @@ import {
   MessageSquare
 } from 'lucide-react';
 
+import { COURSES } from '@/data/courses';
+
 export default function CoursePlayerPage() {
   const params = useParams();
   const router = useRouter();
-  const courseId = params.id;
-  const [currentLesson, setCurrentLesson] = useState(0);
+  const courseId = params.id as string;
+
+  // State for tracking progress
+  const [completedLessons, setCompletedLessons] = useState<number[]>([]);
+  const [currentLessonId, setCurrentLessonId] = useState<number>(0);
+
+  const selectedCourse = COURSES.find(c => c.id === courseId) || COURSES[0];
 
   const course = {
     id: courseId,
-    title: 'Contemporary Dance Masterclass',
-    instructor: 'Priya Sharma',
-    progress: 65,
-    curriculum: [
-      {
-        week: 1,
-        title: 'Introduction to Contemporary Dance',
-        lessons: [
-          { id: 1, title: 'Welcome & Course Overview', duration: '10:30', completed: true, locked: false },
-          { id: 2, title: 'History of Contemporary Dance', duration: '15:20', completed: true, locked: false },
-          { id: 3, title: 'Basic Warm-up Exercises', duration: '20:15', completed: true, locked: false },
-          { id: 4, title: 'Understanding Body Alignment', duration: '18:45', completed: true, locked: false },
-          { id: 5, title: 'Week 1 Practice Session', duration: '25:00', completed: true, locked: false },
-        ]
-      },
-      {
-        week: 2,
-        title: 'Basic Techniques and Movements',
-        lessons: [
-          { id: 6, title: 'Floor Work Basics', duration: '22:30', completed: true, locked: false },
-          { id: 7, title: 'Weight Transfer Techniques', duration: '19:15', completed: true, locked: false },
-          { id: 8, title: 'Spiral Movements', duration: '21:00', completed: false, locked: false },
-          { id: 9, title: 'Release Technique', duration: '23:45', completed: false, locked: false },
-          { id: 10, title: 'Combination Practice', duration: '28:00', completed: false, locked: false },
-        ]
-      },
-      {
-        week: 3,
-        title: 'Floor Work Fundamentals',
-        lessons: [
-          { id: 11, title: 'Rolling Techniques', duration: '20:00', completed: false, locked: false },
-          { id: 12, title: 'Floor to Standing Transitions', duration: '22:30', completed: false, locked: false },
-          { id: 13, title: 'Contact Improvisation', duration: '25:15', completed: false, locked: false },
-          { id: 14, title: 'Floor Patterns', duration: '19:45', completed: false, locked: false },
-          { id: 15, title: 'Week 3 Choreography', duration: '30:00', completed: false, locked: false },
-        ]
-      },
-      {
-        week: 4,
-        title: 'Improvisation and Expression',
-        lessons: [
-          { id: 16, title: 'Introduction to Improvisation', duration: '18:00', completed: false, locked: true },
-          { id: 17, title: 'Emotional Expression', duration: '21:30', completed: false, locked: true },
-          { id: 18, title: 'Music Interpretation', duration: '24:00', completed: false, locked: true },
-          { id: 19, title: 'Partner Work', duration: '26:15', completed: false, locked: true },
-          { id: 20, title: 'Improvisation Practice', duration: '28:00', completed: false, locked: true },
-        ]
-      }
-    ]
+    title: selectedCourse.title,
+    instructor: selectedCourse.instructor,
+    // Calculate progress dynamically
+    get progress() {
+      const totalLessons = this.curriculum.reduce((acc: number, week: any) => acc + week.lessons.length, 0);
+      return totalLessons === 0 ? 0 : Math.round((completedLessons.length / totalLessons) * 100);
+    },
+    curriculum: selectedCourse.curriculum
+  };
+
+  // Flatten lessons for easier navigation
+  const allLessons = course.curriculum.flatMap((week: any) => week.lessons);
+  const currentLessonData = allLessons.find((l: any) => l.id === currentLessonId) || allLessons[0];
+  const isCompleted = completedLessons.includes(currentLessonId);
+
+  useEffect(() => {
+    // Reset to first lesson when course changes
+    if (allLessons.length > 0) {
+      setCurrentLessonId(allLessons[0].id);
+    }
+
+    // Load progress from localStorage
+    const savedProgress = localStorage.getItem(`course_progress_${courseId}`);
+    if (savedProgress) {
+      try {
+        setCompletedLessons(JSON.parse(savedProgress));
+      } catch { }
+    } else {
+      setCompletedLessons([]);
+    }
+  }, [courseId]);
+
+  const handleMarkComplete = () => {
+    if (!completedLessons.includes(currentLessonId)) {
+      const newCompleted = [...completedLessons, currentLessonId];
+      setCompletedLessons(newCompleted);
+      localStorage.setItem(`course_progress_${courseId}`, JSON.stringify(newCompleted));
+    }
+
+    // Move to next lesson
+    const currentIndex = allLessons.findIndex((l: any) => l.id === currentLessonId);
+    if (currentIndex < allLessons.length - 1) {
+      setCurrentLessonId(allLessons[currentIndex + 1].id);
+    } else {
+      alert("Congratulations! You have completed the course!");
+      router.push('/dashboard/certificates');
+    }
+  };
+
+  const isLessonLocked = (lessonId: number) => {
+    // Simple logic: Lesson is locked if previous lesson is not completed
+    // Except first lesson is always unlocked
+    if (lessonId === allLessons[0]?.id) return false;
+    const index = allLessons.findIndex((l: any) => l.id === lessonId);
+    if (index > 0) {
+      const prevLessonId = allLessons[index - 1].id;
+      return !completedLessons.includes(prevLessonId);
+    }
+    return false;
   };
 
   return (
@@ -86,7 +103,7 @@ export default function CoursePlayerPage() {
               <ArrowLeft className="w-5 h-5" />
               <span>Back to Dashboard</span>
             </button>
-            
+
             <div className="flex items-center space-x-4">
               <div className="text-right">
                 <p className="text-sm text-gray-600">Your Progress</p>
@@ -103,25 +120,28 @@ export default function CoursePlayerPage() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
               {/* Video Area */}
-              <div className="relative bg-black aspect-video flex items-center justify-center">
-                <div className="text-center text-white">
-                  <PlayCircle className="w-20 h-20 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg">Video Player</p>
-                  <p className="text-sm opacity-75">Lesson content will play here</p>
-                </div>
+              <div className="relative bg-black aspect-video flex items-center justify-center group">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${currentLessonData.videoId}?autoplay=1&rel=0`}
+                  title={currentLessonData.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                ></iframe>
               </div>
 
               {/* Video Controls Info */}
               <div className="p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Welcome & Course Overview
+                  {currentLessonData.title}
                 </h2>
-                <p className="text-gray-600 mb-4">Week 1: Introduction to Contemporary Dance</p>
-                
                 <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6">
                   <div className="flex items-center space-x-2">
                     <Clock className="w-4 h-4" />
-                    <span>10:30</span>
+                    <span>{currentLessonData.duration}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <FileText className="w-4 h-4" />
@@ -146,30 +166,28 @@ export default function CoursePlayerPage() {
                       Discussion
                     </button>
                   </div>
-                  
+
                   <div className="prose max-w-none">
                     <p className="text-gray-700">
-                      Welcome to the Contemporary Dance Masterclass! In this introductory lesson, 
-                      we'll cover the basics of contemporary dance, its history, and what you can 
-                      expect from this course. Get ready to embark on an exciting journey of 
-                      movement and expression.
+                      Welcome to this lesson on {currentLessonData.title}.
+                      Watch the video carefully and practice the movements.
+                      Remember to warm up before starting!
                     </p>
-                    <h3 className="text-lg font-semibold mt-4 mb-2">What You'll Learn:</h3>
-                    <ul className="list-disc list-inside space-y-1 text-gray-700">
-                      <li>Course structure and expectations</li>
-                      <li>Brief history of contemporary dance</li>
-                      <li>Essential terminology</li>
-                      <li>How to get the most from this course</li>
-                    </ul>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Mark Complete Button */}
-            <button className="w-full bg-primary text-white py-4 rounded-xl font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center space-x-2">
+            <button
+              onClick={handleMarkComplete}
+              className={`w-full py-4 rounded-xl font-semibold transition-colors flex items-center justify-center space-x-2 ${isCompleted
+                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                : 'bg-primary text-white hover:bg-primary/90'
+                }`}
+            >
               <CheckCircle className="w-5 h-5" />
-              <span>Mark as Complete & Continue</span>
+              <span>{isCompleted ? 'Completed (Click to continue)' : 'Mark as Complete & Continue'}</span>
             </button>
           </div>
 
@@ -177,48 +195,56 @@ export default function CoursePlayerPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Course Content</h3>
-              
+
               <div className="space-y-4">
-                {course.curriculum.map((week) => (
+                {course.curriculum.map((week: any) => (
                   <div key={week.week} className="border-b pb-4 last:border-b-0">
                     <h4 className="font-semibold text-gray-900 mb-3">
                       Week {week.week}: {week.title}
                     </h4>
                     <div className="space-y-2">
-                      {week.lessons.map((lesson) => (
-                        <button
-                          key={lesson.id}
-                          onClick={() => !lesson.locked && setCurrentLesson(lesson.id)}
-                          disabled={lesson.locked}
-                          className={`w-full text-left p-3 rounded-lg transition-colors ${
-                            lesson.completed
-                              ? 'bg-green-50 hover:bg-green-100'
-                              : lesson.locked
-                              ? 'bg-gray-50 cursor-not-allowed opacity-60'
-                              : 'bg-gray-50 hover:bg-gray-100'
-                          }`}
-                        >
-                          <div className="flex items-start space-x-3">
-                            <div className="flex-shrink-0 mt-1">
-                              {lesson.completed ? (
-                                <CheckCircle className="w-5 h-5 text-green-600" />
-                              ) : lesson.locked ? (
-                                <Lock className="w-5 h-5 text-gray-400" />
-                              ) : (
-                                <PlayCircle className="w-5 h-5 text-primary" />
-                              )}
+                      {week.lessons.map((lesson: any) => {
+                        const isLocked = isLessonLocked(lesson.id);
+                        const isLessonCompleted = completedLessons.includes(lesson.id);
+                        const isCurrent = currentLessonId === lesson.id;
+
+                        return (
+                          <button
+                            key={lesson.id}
+                            onClick={() => !isLocked && setCurrentLessonId(lesson.id)}
+                            disabled={isLocked}
+                            className={`w-full text-left p-3 rounded-lg transition-colors ${isCurrent
+                              ? 'bg-primary/10 ring-1 ring-primary'
+                              : isLessonCompleted
+                                ? 'bg-green-50 hover:bg-green-100'
+                                : isLocked
+                                  ? 'bg-gray-50 cursor-not-allowed opacity-60'
+                                  : 'bg-gray-50 hover:bg-gray-100'
+                              }`}
+                          >
+                            <div className="flex items-start space-x-3">
+                              <div className="flex-shrink-0 mt-1">
+                                {isLessonCompleted ? (
+                                  <CheckCircle className="w-5 h-5 text-green-600" />
+                                ) : isLocked ? (
+                                  <Lock className="w-5 h-5 text-gray-400" />
+                                ) : isCurrent ? (
+                                  <PlayCircle className="w-5 h-5 text-primary animate-pulse" />
+                                ) : (
+                                  <PlayCircle className="w-5 h-5 text-gray-400" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className={`text-sm font-medium ${isLocked ? 'text-gray-400' : 'text-gray-900'
+                                  }`}>
+                                  {lesson.title}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">{lesson.duration}</p>
+                              </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className={`text-sm font-medium ${
-                                lesson.locked ? 'text-gray-400' : 'text-gray-900'
-                              }`}>
-                                {lesson.title}
-                              </p>
-                              <p className="text-xs text-gray-500 mt-1">{lesson.duration}</p>
-                            </div>
-                          </div>
-                        </button>
-                      ))}
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
                 ))}

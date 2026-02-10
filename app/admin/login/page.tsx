@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
           </div>
           <div className="text-white">
             <h1 className="text-2xl font-bold">Admin Portal</h1>
-            <p className="text-sm">RhythmFlow Academy</p>
+            <p className="text-sm">Sachin's Dance Academy</p>
           </div>
         </Link>
 

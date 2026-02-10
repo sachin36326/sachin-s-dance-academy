@@ -126,7 +126,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between py-3 border-b">
                 <div>
                   <p className="font-medium text-gray-900">New student enrollment</p>
-                  <p className="text-sm text-gray-600">Sarah Johnson joined Hip Hop Basics</p>
+                  <p className="text-sm text-gray-600">Adarsh Khumbar joined Hip Hop Basics</p>
                 </div>
                 <span className="text-sm text-gray-500">2 hours ago</span>
               </div>

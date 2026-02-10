@@ -1,4 +1,4 @@
--- Sample Data for RhythmFlow Academy
+-- Sample Data for Sachin's Dance Academy
 -- Run this after setting up the main schema
 
 -- Insert Sample Courses

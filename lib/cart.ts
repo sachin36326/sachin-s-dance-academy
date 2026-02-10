@@ -8,7 +8,7 @@ export interface CartItem {
   instructor: string;
 }
 
-const CART_STORAGE_KEY = 'rhythmflow_cart';
+const CART_STORAGE_KEY = 'sachinsdance_cart';
 
 export function getCart(): CartItem[] {
   if (typeof window !== 'undefined') {

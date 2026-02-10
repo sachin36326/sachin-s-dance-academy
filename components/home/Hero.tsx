@@ -6,10 +6,12 @@ import { useState, useEffect } from 'react';
 
 export default function Hero() {
   const [currentImage, setCurrentImage] = useState(0);
-  
+  const [showDemo, setShowDemo] = useState(false);
+
   const danceImages = [
-    'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=600&h=800&fit=crop',
+    '/images/s3.jpg',
     'https://images.unsplash.com/photo-1547153760-18fc86324498?w=600&h=800&fit=crop',
+    '/images/s11.jpg',
     'https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=600&h=800&fit=crop',
     'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=600&h=800&fit=crop',
   ];
@@ -22,55 +24,34 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Background with Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent"></div>
-      
-      {/* Dancing Silhouettes/Images */}
-      <div className="absolute inset-0 overflow-hidden opacity-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark">
+      {/* Animated Background with Glows */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[100px] animate-pulse-glow" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent/10 rounded-full blur-[100px] animate-pulse-glow" style={{ animationDelay: '1s' }} />
+      </div>
+
+      {/* Dancing Silhouettes/Images - Enhanced Mask */}
+      <div className="absolute inset-0 overflow-hidden opacity-30 mix-blend-screen">
         {danceImages.map((img, index) => (
           <div
             key={index}
-            className={`absolute transition-opacity duration-1000 ${
-              index === currentImage ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`absolute transition-all duration-1000 ease-in-out w-full h-full lg:w-1/2 lg:left-1/2 ${index === currentImage ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
+              }`}
             style={{
-              top: '50%',
-              right: '5%',
-              transform: 'translateY(-50%)',
-              width: '400px',
-              height: '600px',
+              top: '0%',
+              right: '0%',
+              // width: '100%', // Removed to let classes handle width
+              // height: '100%', // Removed to let classes handle height
               backgroundImage: `url(${img})`,
-              backgroundSize: 'cover',
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
-              maskImage: 'linear-gradient(to left, rgba(0,0,0,0.8), transparent)',
-              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.8), transparent)',
+              maskImage: 'linear-gradient(to left, rgba(0,0,0,1), transparent)',
+              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1), transparent)',
             }}
           />
         ))}
-      </div>
-
-      {/* Animated Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-white/30 rounded-full animate-float"
-            style={{
-              left: `${(i * 5) % 100}%`,
-              top: `${(i * 7) % 100}%`,
-              animationDelay: `${(i * 0.3) % 5}s`,
-              animationDuration: `${8 + (i % 5)}s`,
-            }}
-          />
-        ))}
-      </div>
-      
-      {/* Animated Circles */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
       </div>
 
       {/* Content */}
@@ -78,32 +59,35 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Text Content */}
           <div className="text-center lg:text-left animate-fade-in">
-            <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 animate-slide-up">
+            <div className="inline-flex items-center space-x-2 glass-panel px-4 py-2 rounded-full mb-6 animate-slide-up border-primary/30">
               <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-white text-sm font-medium">India's #1 Online Dance Academy</span>
+              <span className="text-light text-sm font-medium tracking-wide">India's #1 Online Dance Academy</span>
             </div>
-            
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-slide-up leading-tight">
+
+            <h1 className="text-5xl md:text-7xl font-bold text-light mb-6 animate-slide-up leading-tight drop-shadow-lg">
               Where Movement
               <br />
-              <span className="text-accent animate-pulse">Meets Mastery</span>
+              <span className="gradient-title">Meets Mastery</span>
             </h1>
-            
-            <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              Transform your passion into performance with India's premier online dance academy. 
+
+            <p className="text-xl md:text-2xl text-silver mb-8 max-w-2xl animate-slide-up font-light" style={{ animationDelay: '0.2s' }}>
+              Transform your passion into performance with India's premier online dance academy.
               Learn from world-class instructors, anytime, anywhere.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center animate-slide-up" style={{ animationDelay: '0.4s' }}>
-              <Link 
-                href="/courses" 
-                className="group bg-white text-primary px-8 py-4 rounded-full font-semibold text-lg flex items-center space-x-2 hover:shadow-2xl hover:scale-105 transition-all duration-300"
+              <Link
+                href="/courses"
+                className="btn-primary flex items-center space-x-2 btn-3d"
               >
                 <span>Explore Courses</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <button className="group bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full font-semibold text-lg flex items-center space-x-2 hover:bg-white/30 transition-all duration-300 border-2 border-white/30">
-                <Play className="w-5 h-5" />
+              <button
+                onClick={() => setShowDemo(true)}
+                className="btn-secondary flex items-center space-x-2 btn-3d"
+              >
+                <Play className="w-5 h-5 text-accent" />
                 <span>Watch Demo</span>
               </button>
             </div>
@@ -111,70 +95,57 @@ export default function Hero() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 animate-slide-up" style={{ animationDelay: '0.6s' }}>
               {[
-                { number: '10,000+', label: 'Active Students' },
+                { number: '10K+', label: 'Active Students' },
                 { number: '50+', label: 'Expert Instructors' },
                 { number: '100+', label: 'Dance Courses' },
-                { number: '98%', label: 'Success Rate' },
+                { number: '4.9', label: 'Student Rating' },
               ].map((stat, index) => (
-                <div key={index} className="text-white">
-                  <div className="text-3xl md:text-4xl font-bold mb-2 animate-pulse">{stat.number}</div>
-                  <div className="text-sm md:text-base text-white/80">{stat.label}</div>
+                <div key={index} className="glass-card p-4 rounded-xl text-center border-white/5">
+                  <div className="text-3xl font-bold mb-1 gradient-text">{stat.number}</div>
+                  <div className="text-xs text-silver uppercase tracking-wider">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right Column - Dance Animation/GIF */}
-          <div className="hidden lg:block relative animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <div className="relative">
-              {/* Main Dance Image with Animation */}
-              <div className="relative w-full h-[600px] rounded-3xl overflow-hidden shadow-2xl">
-                {danceImages.map((img, index) => (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 transition-all duration-1000 ${
-                      index === currentImage ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-                    }`}
-                  >
-                    <img
-                      src={img}
-                      alt="Dance"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent"></div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Floating Elements */}
-              <div className="absolute -top-6 -right-6 bg-white rounded-2xl p-4 shadow-xl animate-float">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-semibold">Live Classes</span>
-                </div>
-              </div>
-
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-xl animate-float" style={{ animationDelay: '1s' }}>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">4.9★</div>
-                  <div className="text-xs text-gray-600">Student Rating</div>
-                </div>
-              </div>
-
-              {/* Decorative Elements */}
-              <div className="absolute top-1/4 -left-8 w-16 h-16 bg-accent/30 rounded-full blur-xl animate-pulse"></div>
-              <div className="absolute bottom-1/4 -right-8 w-20 h-20 bg-secondary/30 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-            </div>
-          </div>
+          {/* Right Column - Spacer for background visuals */}
+          <div className="hidden lg:block"></div>
         </div>
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce z-20 opacity-50">
+        <div className="w-6 h-10 border-2 border-silver rounded-full flex justify-center">
+          <div className="w-1 h-2 bg-accent rounded-full mt-2 animate-pulse"></div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {showDemo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in" onClick={() => setShowDemo(false)}>
+          <div className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10" onClick={e => e.stopPropagation()}>
+            <div className="aspect-video">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/sq0oCPLGWLU?rel=0&modestbranding=1"
+                title="Demo Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <button
+              onClick={() => setShowDemo(false)}
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

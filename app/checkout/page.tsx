@@ -16,7 +16,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     // Check authentication
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('rhythmflow_user') : null;
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('sachinsdance_user') : null;
     if (!userStr) {
       router.push('/login?redirect=/checkout');
       return;
@@ -24,7 +24,7 @@ export default function CheckoutPage() {
     setIsAuthenticated(true);
 
     // Load cart
-    const cartStr = typeof window !== 'undefined' ? localStorage.getItem('rhythmflow_cart') : null;
+    const cartStr = typeof window !== 'undefined' ? localStorage.getItem('sachinsdance_cart') : null;
     if (cartStr) {
       try {
         const cart = JSON.parse(cartStr);
@@ -33,7 +33,7 @@ export default function CheckoutPage() {
           return;
         }
         setCartItems(cart);
-      } catch {}
+      } catch { }
     } else {
       router.push('/cart');
     }
@@ -60,12 +60,12 @@ export default function CheckoutPage() {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Mark courses as enrolled
-    const enrolledStr = typeof window !== 'undefined' ? localStorage.getItem('rhythmflow_enrolled') : null;
+    const enrolledStr = typeof window !== 'undefined' ? localStorage.getItem('sachinsdance_enrolled') : null;
     let enrolled = [];
     if (enrolledStr) {
       try {
         enrolled = JSON.parse(enrolledStr);
-      } catch {}
+      } catch { }
     }
 
     cartItems.forEach(item => {
@@ -75,8 +75,8 @@ export default function CheckoutPage() {
     });
 
     if (typeof window !== 'undefined') {
-      localStorage.setItem('rhythmflow_enrolled', JSON.stringify(enrolled));
-      localStorage.removeItem('rhythmflow_cart');
+      localStorage.setItem('sachinsdance_enrolled', JSON.stringify(enrolled));
+      localStorage.removeItem('sachinsdance_cart');
     }
 
     setProcessing(false);
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
   return (
     <main className="min-h-screen bg-light">
       <Navbar />
-      
+
       <section className="pt-32 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-8">Checkout</h1>
@@ -122,17 +122,16 @@ export default function CheckoutPage() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Select Payment Method</h2>
-                
+
                 <div className="space-y-3">
                   {paymentMethods.map((method) => (
                     <button
                       key={method.id}
                       onClick={() => setSelectedPayment(method.id)}
-                      className={`w-full p-4 border-2 rounded-xl text-left transition-all ${
-                        selectedPayment === method.id
+                      className={`w-full p-4 border-2 rounded-xl text-left transition-all ${selectedPayment === method.id
                           ? 'border-primary bg-primary/5'
                           : 'border-gray-200 hover:border-primary/50'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center space-x-4">
                         <span className="text-3xl">{method.icon}</span>
@@ -172,10 +171,10 @@ export default function CheckoutPage() {
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
-                
+
                 <div className="space-y-4 mb-6">
-                  {cartItems.map((item) => (
-                    <div key={item.courseId} className="flex items-start space-x-3">
+                  {cartItems.map((item, index) => (
+                    <div key={`${item.courseId}-${index}`} className="flex items-start space-x-3">
                       <img
                         src={item.thumbnail}
                         alt={item.title}

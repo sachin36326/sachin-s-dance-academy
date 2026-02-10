@@ -157,7 +157,7 @@ export default function AdminSettings() {
                   </label>
                   <input
                     type="text"
-                    defaultValue="RhythmFlow Academy"
+                    defaultValue="Sachin's Dance Academy"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-admin"
                   />
                 </div>
@@ -167,7 +167,7 @@ export default function AdminSettings() {
                   </label>
                   <input
                     type="email"
-                    defaultValue="info@rhythmflow.com"
+                    defaultValue="info@sachin's dance.com"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-admin"
                   />
                 </div>

@@ -30,7 +30,7 @@ export default function AdminCourses() {
     { 
       id: 1, 
       name: 'Hip Hop Basics', 
-      instructor: 'Rajesh Kumar', 
+      instructor: 'Sachin Chauhan', 
       students: 45, 
       duration: '8 weeks', 
       price: '₹8,500',
@@ -40,7 +40,7 @@ export default function AdminCourses() {
     { 
       id: 2, 
       name: 'Contemporary Dance', 
-      instructor: 'Priya Mehta', 
+      instructor: 'Shahbaaz Shaikh', 
       students: 32, 
       duration: '10 weeks', 
       price: '₹12,000',
@@ -60,7 +60,7 @@ export default function AdminCourses() {
     { 
       id: 4, 
       name: 'Salsa Intermediate', 
-      instructor: 'Carlos Rodriguez', 
+      instructor: 'Divesh Singh', 
       students: 20, 
       duration: '6 weeks', 
       price: '₹7,000',
@@ -70,7 +70,7 @@ export default function AdminCourses() {
     { 
       id: 5, 
       name: 'Ballet Foundation', 
-      instructor: 'Sophia Williams', 
+      instructor: 'Afrose Shaikh', 
       students: 18, 
       duration: '10 weeks', 
       price: '₹10,500',

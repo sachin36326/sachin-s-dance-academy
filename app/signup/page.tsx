@@ -37,7 +37,22 @@ export default function SignupPage() {
     try {
       // Simulate signup - Replace with actual Supabase auth
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
+      // Create user session
+      const user = {
+        id: Date.now().toString(),
+        name: formData.fullName,
+        email: formData.email,
+        role: 'student' as const
+      };
+
+      // Store in localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sachinsdance_user', JSON.stringify(user));
+        // Initialize empty enrolled courses (Force reset for new user)
+        localStorage.setItem('sachinsdance_enrolled', JSON.stringify([]));
+      }
+
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (err) {
@@ -56,7 +71,7 @@ export default function SignupPage() {
             <span className="text-primary font-bold text-2xl">R</span>
           </div>
           <div className="text-white">
-            <h1 className="text-2xl font-bold">RhythmFlow</h1>
+            <h1 className="text-2xl font-bold">Sachin's Dance</h1>
             <p className="text-sm">Academy</p>
           </div>
         </Link>
@@ -85,7 +100,7 @@ export default function SignupPage() {
                   required
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
                   placeholder="John Doe"
                 />
               </div>
@@ -103,7 +118,7 @@ export default function SignupPage() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
                   placeholder="your@email.com"
                 />
               </div>
@@ -121,7 +136,7 @@ export default function SignupPage() {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
                   placeholder="••••••••"
                 />
                 <button
@@ -146,7 +161,7 @@ export default function SignupPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
                   placeholder="••••••••"
                 />
               </div>

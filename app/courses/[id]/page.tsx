@@ -4,11 +4,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { 
-  Clock, 
-  Users, 
-  Star, 
-  Calendar,
+import {
+  Clock,
+  Users,
+  Star,
   Award,
   PlayCircle,
   CheckCircle,
@@ -17,74 +16,23 @@ import {
   Share2
 } from 'lucide-react';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 export default function CourseDetailPage() {
   const params = useParams();
   const router = useRouter();
   const courseId = params.id;
+  const { addItem, items } = useCart();
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('rhythmflow_user') : null;
-    
-    // Check if course is in cart
-    const cartStr = typeof window !== 'undefined' ? localStorage.getItem('rhythmflow_cart') : null;
-    if (cartStr) {
-      try {
-        const cart = JSON.parse(cartStr);
-        setIsInCart(cart.some((item: any) => item.courseId === courseId));
-      } catch {}
-    }
-  }, [courseId]);
-
-  const handleAddToCart = () => {
-    // Check if user is logged in
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('rhythmflow_user') : null;
-    
-    if (!userStr) {
-      // Redirect to login
-      router.push('/login?redirect=/courses/' + courseId);
-      return;
-    }
-
-    // Add to cart
-    const cartStr = typeof window !== 'undefined' ? localStorage.getItem('rhythmflow_cart') : null;
-    let cart = [];
-    if (cartStr) {
-      try {
-        cart = JSON.parse(cartStr);
-      } catch {}
-    }
-
-    const cartItem = {
-      courseId: course.id.toString(),
-      title: course.title,
-      price: course.price,
-      thumbnail: course.thumbnail,
-      instructor: course.instructor
-    };
-
-    const exists = cart.find((item: any) => item.courseId === courseId);
-    if (!exists) {
-      cart.push(cartItem);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('rhythmflow_cart', JSON.stringify(cart));
-      }
-      setIsInCart(true);
-    }
-
-    // Redirect to cart
-    router.push('/cart');
-  };
-
-  // Mock course data - in real app, fetch based on courseId
+  // Mock course data
   const courses = {
     '1': {
       id: 1,
       title: 'Contemporary Dance Masterclass',
-      instructor: 'Priya Sharma',
+      instructor: 'Shahbaaz Shaikh',
       instructorBio: 'Professional dancer with 15+ years of experience in contemporary dance',
       style: 'Contemporary',
       difficulty: 'Intermediate',
@@ -95,6 +43,7 @@ export default function CourseDetailPage() {
       reviews: 342,
       thumbnail: 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800',
       description: 'Master the art of contemporary dance with this comprehensive course. Learn fluid movements, emotional expression, and advanced techniques that will transform your dancing.',
+      videoId: '3e5TQjaNysg', // Contemporary (Alex Warren)
       whatYouLearn: [
         'Fundamental contemporary dance techniques',
         'Floor work and improvisation',
@@ -122,7 +71,7 @@ export default function CourseDetailPage() {
     '2': {
       id: 2,
       title: 'Hip-Hop Fundamentals',
-      instructor: 'Rahul Verma',
+      instructor: 'Sachin Chauhan',
       instructorBio: 'Award-winning hip-hop choreographer and street dance expert',
       style: 'Hip-Hop',
       difficulty: 'Beginner',
@@ -133,6 +82,7 @@ export default function CourseDetailPage() {
       reviews: 567,
       thumbnail: 'https://images.unsplash.com/photo-1547153760-18fc86324498?w=800',
       description: 'Start your hip-hop journey with this beginner-friendly course. Learn the fundamentals of street dance, popping, locking, and breaking.',
+      videoId: 'OZEk_ztv8ww', // Hip-Hop (Mihran Kirakosian)
       whatYouLearn: [
         'Hip-hop basic moves and grooves',
         'Popping and locking techniques',
@@ -158,7 +108,7 @@ export default function CourseDetailPage() {
     '3': {
       id: 3,
       title: 'Classical Ballet Technique',
-      instructor: 'Anjali Desai',
+      instructor: 'Afrose Shaikh',
       instructorBio: 'Classically trained ballet instructor with international performance experience',
       style: 'Ballet',
       difficulty: 'Advanced',
@@ -169,6 +119,7 @@ export default function CourseDetailPage() {
       reviews: 198,
       thumbnail: 'https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=800',
       description: 'Refine your ballet technique with this advanced course covering classical ballet methodology, pointe work, and performance artistry.',
+      videoId: '6Fz27G6WwWw', // Ballet (Ballet for Kids - Safe/Embeddable)
       whatYouLearn: [
         'Advanced ballet technique',
         'Pointe work mastery',
@@ -211,6 +162,7 @@ export default function CourseDetailPage() {
       reviews: 892,
       thumbnail: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800',
       description: 'Learn the vibrant and energetic moves of Bollywood dance. Perfect for beginners who want to dance like their favorite movie stars!',
+      videoId: 'XkLMj1FH1SY', // Bollywood (Dance with Deepti - 30 min Workout)
       whatYouLearn: [
         'Classic Bollywood dance moves',
         'Facial expressions and acting',
@@ -234,7 +186,7 @@ export default function CourseDetailPage() {
     '5': {
       id: 5,
       title: 'Salsa & Latin Dance',
-      instructor: 'Maria Rodriguez',
+      instructor: 'Marium Khan',
       instructorBio: 'International salsa champion and Latin dance specialist',
       style: 'Salsa',
       difficulty: 'Intermediate',
@@ -245,6 +197,7 @@ export default function CourseDetailPage() {
       reviews: 276,
       thumbnail: 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800',
       description: 'Spice up your dance skills with this exciting salsa and Latin dance course. Learn partner work, turns, and authentic Latin rhythms.',
+      videoId: 'DTXQuA0xJrw', // Salsa (Social Dance Online)
       whatYouLearn: [
         'Salsa basic steps and patterns',
         'Partner connection and leading/following',
@@ -281,6 +234,7 @@ export default function CourseDetailPage() {
       reviews: 145,
       thumbnail: 'https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=800',
       description: 'Immerse yourself in the rich tradition of Kathak, one of India\'s eight classical dance forms. Master intricate footwork, spins, and storytelling.',
+      videoId: 'I59Zr1z3FBA', // Kathak (Sadler's Wells)
       whatYouLearn: [
         'Traditional Kathak technique',
         'Footwork patterns (tatkar)',
@@ -317,21 +271,83 @@ export default function CourseDetailPage() {
 
   const course = courses[courseId as keyof typeof courses] || courses['1'];
 
+  useEffect(() => {
+    // Check if user is authenticated
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('sachinsdance_user') : null;
+
+    // Check enrollment status
+    const enrolledStr = typeof window !== 'undefined' ? localStorage.getItem('sachinsdance_enrolled') : null;
+    if (enrolledStr && courseId) {
+      try {
+        const enrolled = JSON.parse(enrolledStr);
+        setIsEnrolled(enrolled.includes(courseId));
+      } catch { }
+    }
+
+    // Check if course is in cart
+    if (items) {
+      setIsInCart(items.some((item) => item.id.toString() === courseId));
+    }
+  }, [courseId, items]);
+
   const handleEnroll = () => {
-    setIsEnrolled(true);
-    // In real app, handle enrollment logic
+    // Check if user is logged in
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('sachinsdance_user') : null;
+
+    if (!userStr) {
+      // Redirect to login
+      router.push('/login?redirect=/courses/' + courseId);
+      return;
+    }
+
+    // Add to enrolled courses
+    const enrolledStr = localStorage.getItem('sachinsdance_enrolled');
+    let enrolled = enrolledStr ? JSON.parse(enrolledStr) : [];
+    if (!enrolled.includes(courseId)) {
+      enrolled.push(courseId);
+      localStorage.setItem('sachinsdance_enrolled', JSON.stringify(enrolled));
+      setIsEnrolled(true);
+
+      // Dispatch storage event to update dashboard if open
+      window.dispatchEvent(new Event('storage'));
+
+      // Redirect to dashboard
+      router.push('/dashboard');
+    }
+  };
+
+  const handleAddToCart = () => {
+    // Check if user is logged in
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('sachinsdance_user') : null;
+
+    if (!userStr) {
+      // Redirect to login
+      router.push('/login?redirect=/courses/' + courseId);
+      return;
+    }
+
+    // Add to cart
+    addItem({
+      id: course.id,
+      title: course.title,
+      price: course.price,
+      thumbnail: course.thumbnail,
+    });
+
+    // Redirect to cart
+    router.push('/cart');
   };
 
   return (
     <main className="min-h-screen bg-light">
       <Navbar />
-      
+
       {/* Back Button */}
       <div className="pt-24 pb-4 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => router.back()}
-            className="flex items-center space-x-2 text-gray-600 hover:text-primary transition"
+            className="flex items-center space-x-2 text-gray-900 hover:text-primary transition font-medium"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>Back to Courses</span>
@@ -339,127 +355,67 @@ export default function CourseDetailPage() {
         </div>
       </div>
 
-      {/* Course Header */}
-      <section className="bg-white pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={course.thumbnail}
+            alt={course.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Course Info */}
-            <div className="lg:col-span-2">
-              <div className="mb-4">
-                <span className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-semibold">
+            <div className="lg:col-span-2 text-white">
+              <div className="mb-6">
+                <span className="inline-block bg-primary/20 backdrop-blur-sm border border-primary/30 text-white px-4 py-1 rounded-full text-sm font-semibold">
                   {course.style}
                 </span>
-                <span className="ml-3 inline-block bg-gray-100 text-gray-700 px-4 py-1 rounded-full text-sm font-semibold">
+                <span className="ml-3 inline-block bg-white/20 backdrop-blur-sm border border-white/10 text-white px-4 py-1 rounded-full text-sm font-semibold">
                   {course.difficulty}
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-shadow-lg">
                 {course.title}
               </h1>
 
-              <p className="text-xl text-gray-600 mb-6">
+              <p className="text-xl text-gray-200 mb-8 leading-relaxed max-w-2xl">
                 {course.description}
               </p>
 
-              <div className="flex flex-wrap items-center gap-6 mb-6">
+              <div className="flex flex-wrap items-center gap-6 mb-8 text-sm font-medium">
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-accent text-accent" />
+                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <span className="font-semibold">{course.rating}</span>
-                  <span className="text-gray-600">({course.reviews} reviews)</span>
+                  <span className="text-white">{course.rating}</span>
+                  <span className="text-gray-300">({course.reviews} reviews)</span>
                 </div>
-                <div className="flex items-center space-x-2 text-gray-600">
+                <div className="flex items-center space-x-2 text-gray-300">
                   <Users className="w-5 h-5" />
                   <span>{course.students.toLocaleString()} students</span>
                 </div>
-                <div className="flex items-center space-x-2 text-gray-600">
+                <div className="flex items-center space-x-2 text-gray-300">
                   <Clock className="w-5 h-5" />
                   <span>{course.duration}</span>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-4 mb-8">
+              <div className="flex items-center space-x-4">
                 <img
                   src={`https://ui-avatars.com/api/?name=${course.instructor}&background=random`}
                   alt={course.instructor}
-                  className="w-12 h-12 rounded-full"
+                  className="w-14 h-14 rounded-full border-2 border-white/20 object-cover"
                 />
                 <div>
-                  <p className="font-semibold text-gray-900">{course.instructor}</p>
-                  <p className="text-sm text-gray-600">{course.instructorBio}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column - Enrollment Card */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-24">
-                <div
-                  className="w-full h-48 bg-cover bg-center rounded-xl mb-6"
-                  style={{ backgroundImage: `url(${course.thumbnail})` }}
-                >
-                  <div className="w-full h-full bg-black/30 rounded-xl flex items-center justify-center">
-                    <PlayCircle className="w-16 h-16 text-white" />
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <div className="flex items-baseline space-x-2 mb-2">
-                    <span className="text-4xl font-bold text-primary">₹{course.price.toLocaleString()}</span>
-                  </div>
-                  <p className="text-sm text-gray-600">One-time payment • Lifetime access</p>
-                </div>
-
-                {isEnrolled ? (
-                  <div className="space-y-3">
-                    <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg flex items-center space-x-2">
-                      <CheckCircle className="w-5 h-5" />
-                      <span className="font-semibold">You're enrolled!</span>
-                    </div>
-                    <Link
-                      href={`/dashboard/courses/${course.id}`}
-                      className="block w-full btn-primary text-center"
-                    >
-                      Go to Course
-                    </Link>
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleAddToCart}
-                    className="w-full btn-primary mb-3"
-                  >
-                    {isInCart ? 'Go to Cart' : 'Add to Cart'}
-                  </button>
-                )}
-
-                <div className="flex gap-2 mb-6">
-                  <button className="flex-1 border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:border-primary hover:text-primary transition flex items-center justify-center space-x-2">
-                    <Heart className="w-5 h-5" />
-                    <span>Save</span>
-                  </button>
-                  <button className="flex-1 border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:border-primary hover:text-primary transition flex items-center justify-center space-x-2">
-                    <Share2 className="w-5 h-5" />
-                    <span>Share</span>
-                  </button>
-                </div>
-
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Lifetime access</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Certificate of completion</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>30-day money-back guarantee</span>
-                  </div>
+                  <p className="font-bold text-white text-lg">{course.instructor}</p>
+                  <p className="text-gray-300 text-sm">{course.instructorBio}</p>
                 </div>
               </div>
             </div>
@@ -468,10 +424,11 @@ export default function CourseDetailPage() {
       </section>
 
       {/* Course Content */}
-      <section className="py-12 bg-gray-50">
+      <section className="bg-white pb-12 -mt-10 relative z-20 rounded-t-3xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
+            {/* Left Column - Detailed Content */}
+            <div className="lg:col-span-2 space-y-8 pt-12">
               {/* What You'll Learn */}
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">What You'll Learn</h2>
@@ -517,34 +474,137 @@ export default function CourseDetailPage() {
               </div>
             </div>
 
-            {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-                <h3 className="font-bold text-lg mb-4">Course Features</h3>
+            {/* Right Column - Enrollment Card & Features */}
+            <div className="lg:col-span-1 -mt-32 relative z-30 space-y-8">
+              {/* Enrollment Card */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <div className="relative w-full h-48 rounded-xl overflow-hidden mb-6 border border-gray-200 group cursor-pointer" onClick={() => setShowVideo(true)}>
+                  <img
+                    src={course.thumbnail}
+                    alt={course.title}
+                    className="w-full h-full object-cover object-top transition duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition">
+                    <PlayCircle className="w-16 h-16 text-white bg-black/50 rounded-full p-2 backdrop-blur-sm group-hover:scale-110 transition" />
+                  </div>
+                </div>
+
+                {/* Video Modal */}
+                {showVideo && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4" onClick={() => setShowVideo(false)}>
+                    <div className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://www.youtube.com/embed/${course.videoId}?autoplay=1`}
+                        title={course.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
+                      ></iframe>
+                      <button
+                        onClick={() => setShowVideo(false)}
+                        className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 backdrop-blur-sm transition"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mb-6">
+                  <div className="flex items-baseline space-x-2 mb-2">
+                    <span className="text-4xl font-bold text-primary">₹{course.price.toLocaleString()}</span>
+                  </div>
+                  <p className="text-sm text-gray-600">One-time payment • Lifetime access</p>
+                </div>
+
+                {isEnrolled ? (
+                  <div className="space-y-3">
+                    <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg flex items-center space-x-2">
+                      <CheckCircle className="w-5 h-5" />
+                      <span className="font-semibold">You're enrolled!</span>
+                    </div>
+                    <Link
+                      href={`/dashboard/courses/${course.id}`}
+                      className="block w-full btn-primary text-center"
+                    >
+                      Go to Course
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <button
+                      onClick={handleEnroll}
+                      className="w-full btn-primary"
+                    >
+                      Enroll Now
+                    </button>
+                    <button
+                      onClick={handleAddToCart}
+                      className="w-full border-2 border-primary text-primary font-semibold py-3 rounded-xl hover:bg-primary/10 transition"
+                    >
+                      {isInCart ? 'Go to Cart' : 'Add to Cart'}
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex gap-2 mb-6">
+                  <button className="flex-1 border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:border-primary hover:text-primary transition flex items-center justify-center space-x-2">
+                    <Heart className="w-5 h-5" />
+                    <span>Save</span>
+                  </button>
+                  <button className="flex-1 border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:border-primary hover:text-primary transition flex items-center justify-center space-x-2">
+                    <Share2 className="w-5 h-5" />
+                    <span>Share</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span className="text-gray-700">Lifetime access</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span className="text-gray-700">Certificate of completion</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span className="text-gray-700">30-day money-back guarantee</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Course Features */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h3 className="font-bold text-lg mb-4 text-gray-900">Course Features</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Duration</span>
-                    <span className="font-semibold">{course.duration}</span>
+                    <span className="font-semibold text-gray-900">{course.duration}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Difficulty</span>
-                    <span className="font-semibold">{course.difficulty}</span>
+                    <span className="font-semibold text-gray-900">{course.difficulty}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Students</span>
-                    <span className="font-semibold">{course.students.toLocaleString()}</span>
+                    <span className="font-semibold text-gray-900">{course.students.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Language</span>
-                    <span className="font-semibold">English, Hindi</span>
+                    <span className="font-semibold text-gray-900">English, Hindi</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Certificate</span>
-                    <span className="font-semibold">Yes</span>
+                    <span className="font-semibold text-gray-900">Yes</span>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>

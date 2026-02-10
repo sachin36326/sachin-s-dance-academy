@@ -5,21 +5,21 @@ import { Star, Quote } from 'lucide-react';
 export default function Testimonials() {
   const testimonials = [
     {
-      name: 'Sneha Patel',
+      name: 'Piyush More',
       role: 'Contemporary Dancer',
       image: 'https://i.pravatar.cc/150?img=1',
       rating: 5,
-      text: 'RhythmFlow Academy transformed my dancing. The instructors are world-class and the platform is so easy to use. I went from beginner to performing on stage in just 6 months!',
+      text: 'Sachins Dance Academy transformed my dancing. The instructors are world-class and the platform is so easy to use. I went from beginner to performing on stage in just 6 months!',
     },
     {
-      name: 'Arjun Mehta',
+      name: 'Minesh Shah',
       role: 'Hip-Hop Enthusiast',
       image: 'https://i.pravatar.cc/150?img=12',
       rating: 5,
       text: 'The hip-hop courses here are incredible. I love how I can learn at my own pace and the video quality is amazing. Best investment I made in my dance journey!',
     },
     {
-      name: 'Kavya Reddy',
+      name: 'Sheetal Shekawat',
       role: 'Ballet Student',
       image: 'https://i.pravatar.cc/150?img=5',
       rating: 5,
@@ -28,13 +28,13 @@ export default function Testimonials() {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 relative bg-[#0a0a0f]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Student <span className="text-gradient">Success Stories</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Student <span className="gradient-gold">Success Stories</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             Hear from our amazing community of dancers
           </p>
         </div>
@@ -43,34 +43,34 @@ export default function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="relative bg-light rounded-2xl p-8 shadow-lg hover-lift"
+              className="relative glass-card rounded-2xl p-8 shadow-xl card-3d border border-white/5"
             >
               {/* Quote Icon */}
-              <div className="absolute top-6 right-6 opacity-10">
-                <Quote className="w-16 h-16 text-primary" />
+              <div className="absolute top-6 right-6 opacity-20">
+                <Quote className="w-16 h-16 text-accent" />
               </div>
 
               {/* Rating */}
               <div className="flex space-x-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
+                  <Star key={i} className="w-5 h-5 fill-amber-500 text-amber-500" />
                 ))}
               </div>
 
               {/* Text */}
-              <p className="text-gray-700 mb-6 relative z-10">
+              <p className="text-gray-300 mb-6 relative z-10 leading-relaxed italic">
                 "{testimonial.text}"
               </p>
 
               {/* Author */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 border-t border-white/5 pt-6">
                 <div
-                  className="w-12 h-12 rounded-full bg-cover bg-center"
+                  className="w-12 h-12 rounded-full bg-cover bg-center border-2 border-accent/20"
                   style={{ backgroundImage: `url(${testimonial.image})` }}
                 ></div>
                 <div>
-                  <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                  <div className="text-sm text-gray-600">{testimonial.role}</div>
+                  <div className="font-semibold text-white">{testimonial.name}</div>
+                  <div className="text-sm text-secondary">{testimonial.role}</div>
                 </div>
               </div>
             </div>
