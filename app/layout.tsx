@@ -3,7 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sachinsdanceacademy.com'), // Replace with actual domain later
+  metadataBase: new URL('https://sachin-s-dance-academy-r5qh.vercel.app'),
   title: {
     default: "Sachin's Dance Academy - India's Premier Online Dance School",
     template: "%s | Sachin's Dance Academy"
